@@ -49,6 +49,15 @@ This project implements a **real-time weather monitoring system** utilizing a **
 
 ---
 
+## 📝 Code Overview
+- The **Arduino code** initializes the DHT11 sensor, reads temperature & humidity, and sends the values over the serial port.
+- The **Web Serial API (JavaScript)** establishes a connection to Arduino, reads the serial data, and updates the UI.
+- **HTML & CSS** create a responsive dashboard for displaying the real-time sensor data.
+- The **loop function** ensures continuous data reading and updates every 2 seconds.
+- If the sensor fails to provide valid readings, the system outputs "NaN,NaN" as an error response.
+
+---
+
 ## 📈 Future Enhancements
 🔹 **Wireless Communication:** Implement ESP8266/ESP32 for remote monitoring.  
 🔹 **Cloud Integration:** Store sensor data for historical analysis.  
