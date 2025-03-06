@@ -1,0 +1,2 @@
+# Real-Time-Web-Weather-Dashboard-Using-DHT11-Web-Serial-API
+The DHT11 Web Weather Dashboard is a real-time environmental monitoring system leveraging an Arduino microcontroller, DHT11 sensor, and Web Serial API for serial communication. It utilizes HTML, CSS, and JavaScript for a responsive UI, enabling real-time data acquisition, processing, and visualization of temperature and humidity values. 
