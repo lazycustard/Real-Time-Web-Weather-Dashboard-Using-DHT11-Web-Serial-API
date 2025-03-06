@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <button id="connectButton">Connect to Arduino</button>
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            background: linear-gradient(to bottom, #f5e6fd, #d7eafd, #c2f0e8);
+            color: #444;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+
+        .container {
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.944);
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.503);
+            backdrop-filter: blur(15px);
+            min-width: 300px;
+            text-shadow: 1px 1px 3px rgba(255, 255, 255, 1.0);
+        }
+
+        h1 {
+            color: #6a5acd; 
+            font-size: 28px;
+        }
+
+        .data {
+            font-size: 22px;
+            margin-top: 15px;
+            color: #252527; 
+        }
+
+        span {
+            font-weight: bold;
+            color: #ff69b4; 
+        }
+    </style>
+
+    <script>
+      let port; 
+document.getElementById("connectButton").addEventListener("click", async () => {
+    try {
+        port = await navigator.serial.requestPort(); 
+        await port.open({ baudRate: 9600 });
+
+        console.log("Connected to Arduino!");  
+        readSerialData(); 
+    } catch (error) {
+        console.error("Error:", error);
+    }
+});
+
+async function readSerialData() {
+    if (!port) {
+        console.error("No serial port connected.");
+        return;
+    }
+
+    const decoder = new TextDecoderStream();
+    const inputStream = port.readable.pipeThrough(decoder);
+    const reader = inputStream.getReader();
+
+    let buffer = ""; 
+
+    try {
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            
+            buffer += value; 
+
+            let lines = buffer.split("\n"); 
+
+            if (lines.length > 1) {
+                let lastLine = lines[lines.length - 2]; 
+                buffer = lines[lines.length - 1]; 
+                
+                let [temp, hum] = lastLine.trim().split(",");
+
+                if (temp && hum) {
+                    document.getElementById("temperature").textContent = `Temperature: ${temp}°C`;
+                    document.getElementById("humidity").textContent = `Humidity: ${hum}%`;
+                    console.log(`Updated -> Temp: ${temp}, Hum: ${hum}`);
+                }
+            }
+        }
+    } catch (error) {
+        console.error("Read error:", error);
+    } finally {
+        reader.releaseLock();
+    }
+}
+
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Weather Dashboard</h1>
+        <p class="data">Temperature: <span id="temperature">--</span> °C</p>
+        <p class="data">Humidity: <span id="humidity">--</span> %</p>
+    </div>
+</body>
+</html>
+
